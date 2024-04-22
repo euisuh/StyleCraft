@@ -1,3 +1,4 @@
+import argparse
 import torch
 from torchvision import transforms, models
 from PIL import Image
@@ -22,21 +23,30 @@ def tensor_to_image(tensor):
     image = unloader(image)
     return image
 
-content_image = load_image("assets/newjeans-omg.jpeg")
-style_image = load_image("assets/les-demoiselles-davignon.jpeg", scale=0.5)
+def main(content_image_path, style_image_path):
+    content_image = load_image(content_image_path)
+    style_image = load_image(style_image_path, scale=0.5)
 
-model = models.vgg19(pretrained=True).features
-for name, layer in model.named_children():
-    if isinstance(layer, torch.nn.MaxPool2d):
-        model[int(name)] = torch.nn.AvgPool2d(kernel_size=2, stride=2, padding=0)
+    model = models.vgg19(pretrained=True).features
+    for name, layer in model.named_children():
+        if isinstance(layer, torch.nn.MaxPool2d):
+            model[int(name)] = torch.nn.AvgPool2d(kernel_size=2, stride=2, padding=0)
 
-model = model.eval()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+    model = model.eval()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
 
-# Implement the style transfer
-# (Additional implementation needed here for extracting features, calculating losses, and updating the target image)
+    # Implement the style transfer
+    # (Additional implementation needed here for extracting features, calculating losses, and updating the target image)
 
-output = tensor_to_image(content_image)
-plt.imshow(output)
-plt.show()
+    output = tensor_to_image(content_image)
+    plt.imshow(output)
+    plt.show()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Neural Style Transfer")
+    parser.add_argument("content_image_path", help="Path to the content image")
+    parser.add_argument("style_image_path", help="Path to the style image")
+    args = parser.parse_args()
+    
+    main(args.content_image_path, args.style_image_path)
