@@ -23,7 +23,11 @@ def tensor_to_image(tensor):
     image = unloader(image)
     return image
 
-def main(content_image_path, style_image_path):
+def save_image(image_tensor, output_path):
+    image = tensor_to_image(image_tensor)
+    image.save(output_path)
+
+def main(content_image_path, style_image_path, output_path):
     content_image = load_image(content_image_path)
     style_image = load_image(style_image_path, scale=0.5)
 
@@ -39,14 +43,14 @@ def main(content_image_path, style_image_path):
     # Implement the style transfer
     # (Additional implementation needed here for extracting features, calculating losses, and updating the target image)
 
-    output = tensor_to_image(content_image)
-    plt.imshow(output)
-    plt.show()
+    output = content_image  # Placeholder, replace with the actual output tensor
+    save_image(output, output_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Neural Style Transfer")
     parser.add_argument("content_image_path", help="Path to the content image")
     parser.add_argument("style_image_path", help="Path to the style image")
+    parser.add_argument("output_path", help="Path to save the output image")
     args = parser.parse_args()
     
-    main(args.content_image_path, args.style_image_path)
+    main(args.content_image_path, args.style_image_path, args.output_path)
